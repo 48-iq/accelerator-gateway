@@ -8,8 +8,8 @@ import ru.accelerator.sdt.gateway.dto.user.UserUpdateDto;
 
 public interface UserService {
     UserDto registerUser(UserRegisterDto userDto);
-    void updateUser(Integer id, UserUpdateDto userDto);
-    void updateLimit(Integer id, LimitUpdateDto limitUpdateDto);
+    void updateUser(Integer id, Integer version, UserUpdateDto userDto);
+    void updateLimit(Integer id, Integer version, LimitUpdateDto limitUpdateDto);
     UserDto findUserById(Integer id);
     Page<UserDto> findUsersByUsername(String username, Integer page, Integer size);
     Page<UserDto> findAllUsers(Integer page, Integer size);

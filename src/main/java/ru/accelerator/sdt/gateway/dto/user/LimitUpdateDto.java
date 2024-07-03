@@ -1,5 +1,6 @@
 package ru.accelerator.sdt.gateway.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 @Data
@@ -8,6 +9,8 @@ import lombok.*;
 @Builder
 @ToString
 public class LimitUpdateDto {
-    private String dayQueryCount;
-    private String todayQueryCount;
+    private Integer dayQueryCount;
+    private Integer todayQueryCount;
+    @JsonIgnore
+    private Integer version;
 }

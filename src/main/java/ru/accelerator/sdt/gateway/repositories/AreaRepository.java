@@ -19,7 +19,7 @@ public interface AreaRepository extends JpaRepository<Area, Integer> {
             "set    latitude = coalesce(:latitude, latitude)" +
             "set    soil_type = coalesce(:soilType, soil_type)" +
             "set    sowing_date = coalesce(:sowingDate, sowing_date)" +
-            "where id = :id",
+            "where  id = :id",
         nativeQuery = true)
     void updateArea(Integer id, String title, Double longitude, Double latitude, String soilType, LocalDate sowingDate);
 

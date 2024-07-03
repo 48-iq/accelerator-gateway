@@ -21,9 +21,10 @@ public class User {
     private String patronymic;
     private String username;
     private String password;
-    private String dayQueryCount;
-    private String todayQueryCount;
+    private Integer dayQueryCount;
+    private Integer todayQueryCount;
     private Integer version;
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Query> queries;

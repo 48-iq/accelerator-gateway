@@ -1,5 +1,6 @@
 package ru.accelerator.sdt.gateway.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 @Data
@@ -12,4 +13,6 @@ public class UserUpdateDto {
     private String surname;
     private String patronymic;
     private String password;
+    @JsonIgnore
+    private Integer version;
 }
