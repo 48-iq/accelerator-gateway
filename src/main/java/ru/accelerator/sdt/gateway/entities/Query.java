@@ -17,7 +17,12 @@ public class Query {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Status status;
+
+    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "images", joinColumns = @JoinColumn(name = "query_id"))
+    @Column(name = "image", nullable = false)
     private List<String> images;
+
     @ManyToOne
     @JoinColumn(name = "area_id", referencedColumnName = "id")
     private Area area;

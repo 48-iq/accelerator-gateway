@@ -22,7 +22,6 @@ public class Area {
     private Double latitude;
     private String soilType;
     private LocalDate sowingDate;
-
     @OneToMany(mappedBy = "area")
     private List<Query> queries;
 

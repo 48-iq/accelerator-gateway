@@ -1,6 +1,11 @@
 package ru.accelerator.sdt.gateway.services.interf;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
 public interface ImageService {
-    String uploadImage(byte[] file);
-    byte[] downloadImage(String fileName);
+    String uploadImage(MultipartFile file);
+    MultipartFile downloadImage(String fileName);
+    List<String> userImages(Integer userId);
 }
