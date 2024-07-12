@@ -1,51 +1,94 @@
 package ru.accelerator.sdt.gateway.services.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import ru.accelerator.sdt.gateway.dto.query.QueryCreateDto;
-import ru.accelerator.sdt.gateway.dto.query.QueryDto;
+import ru.accelerator.sdt.gateway.dto.query.QueryResultDto;
 import ru.accelerator.sdt.gateway.dto.query.QueryInfoDto;
-import ru.accelerator.sdt.gateway.entities.Query;
-import ru.accelerator.sdt.gateway.entities.Status;
-import ru.accelerator.sdt.gateway.repositories.AreaRepository;
-import ru.accelerator.sdt.gateway.repositories.QueryRepository;
-import ru.accelerator.sdt.gateway.repositories.UserRepository;
 import ru.accelerator.sdt.gateway.services.interf.QueryService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class QueryServiceImpl implements QueryService {
-    private final QueryRepository queryRepository;
-    private final UserRepository userRepository;
-    private final AreaRepository areaRepository;
+    private final RestTemplate restTemplate;
+    @Value("${hosts.services.query}")
+    private String queryHost;
+    @Value("${mappings.services.query.create}")
+    private String createMapping;
+    @Value("${mappings.services.query.info}")
+    private String infoMapping;
+    @Value("${mappings.services.query.allinfo}")
+    private String allInfoMapping;
+    @Value("${mappings.services.query.result}")
+    private String resultMapping;
+    @Value("${mappings.services.query.allresults}")
+    private String allresultsMapping;
 
     @Override
-    @Transactional
-    public QueryInfoDto createQuery(QueryCreateDto queryDto) {
-        Query query = Query.builder()
-                .user(userRepository.getReferenceById(queryDto.getUserId()))
-                .area(areaRepository.getReferenceById(queryDto.getAreaId()))
-                .images(queryDto.getImages())
-                .status(Status.PROCESSING)
-                .build();
-        query = queryRepository.save(query);
-        return
-
+    public QueryInfoDto createQuery(QueryCreateDto query) {
+        try {
+            ResponseEntity<QueryInfoDto> response = restTemplate.postForEntity(queryHost + createMapping,
+                    query, QueryInfoDto.class);
+            return response.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public void deleteQuery(Integer id) {
-
+    public QueryInfoDto getQueryInfo(Integer id) {
+        try {
+            ResponseEntity<QueryInfoDto> response = restTemplate.getForEntity(queryHost + infoMapping + "/" + id,
+                    QueryInfoDto.class);
+            return response.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public QueryInfoDto getInfo(Integer id) {
-        return null;
+    public Page<QueryInfoDto> getAllQueryInfoInfo(Integer page, Integer size) {
+        try {
+            Map<String, Integer> params = new HashMap<>();
+            params.put("page", page);
+            params.put("size", size);
+            ResponseEntity<Page> response = restTemplate.getForEntity(queryHost + allInfoMapping,
+                    Page.class, params);
+            return response.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public QueryDto getResult(Integer id) {
-        return null;
+    public QueryResultDto getQueryResult(Integer id) {
+        try {
+            ResponseEntity<QueryResultDto> response = restTemplate.getForEntity(queryHost + resultMapping + "/" + id,
+                QueryResultDto.class);
+            return response.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Page<QueryResultDto> getAllQueryResults(Integer page, Integer size) {
+        try {
+            Map<String, Integer> params = new HashMap<>();
+            params.put("page", page);
+            params.put("size", size);
+            ResponseEntity<Page> response = restTemplate.getForEntity(queryHost + allresultsMapping,
+                    Page.class, params);
+            return response.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

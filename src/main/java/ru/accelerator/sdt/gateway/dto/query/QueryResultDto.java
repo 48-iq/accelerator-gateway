@@ -1,7 +1,6 @@
 package ru.accelerator.sdt.gateway.dto.query;
 
 import lombok.*;
-import ru.accelerator.sdt.gateway.entities.Status;
 
 import java.util.List;
 
@@ -11,10 +10,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString
-public class QueryDto {
+public class QueryResultDto {
     private Integer id;
     private String status;
-    private List<String> images;
+    private List<String> imagesIds;
     private Integer areaId;
     private Integer userId;
     private String result;

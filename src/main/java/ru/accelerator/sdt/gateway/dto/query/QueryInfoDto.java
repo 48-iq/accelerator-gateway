@@ -15,5 +15,4 @@ public class QueryInfoDto {
     private String status;
     private Integer userId;
     private Integer areaId;
-    private List<String> images;
 }

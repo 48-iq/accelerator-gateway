@@ -1,2 +1,7 @@
-package ru.accelerator.sdt.gateway.exceptions;public class ValidationException {
+package ru.accelerator.sdt.gateway.exceptions;
+
+import lombok.experimental.StandardException;
+
+@StandardException
+public class ValidationException extends RuntimeException{
 }

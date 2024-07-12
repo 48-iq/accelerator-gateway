@@ -8,14 +8,14 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class UserDto {
+public class UserInfoDto {
     private Integer id;
     private String name;
     private String surname;
     private String patronymic;
     private String username;
-    private Integer dayQueryCount;
-    private Integer todayQueryCount;
+    private Integer dayLimit;
+    private Integer todayCount;
     private String role;
     @JsonIgnore
     private Integer version;

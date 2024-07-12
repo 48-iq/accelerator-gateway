@@ -11,9 +11,11 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AdminPassword {
+    public static AdminPassword of (String password) {
+        return new AdminPassword(null, password);
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer version;
     private String password;
 }

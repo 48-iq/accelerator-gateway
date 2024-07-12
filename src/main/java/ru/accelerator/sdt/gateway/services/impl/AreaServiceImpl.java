@@ -3,104 +3,95 @@ package ru.accelerator.sdt.gateway.services.impl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import ru.accelerator.sdt.gateway.dto.area.AreaCreateDto;
 import ru.accelerator.sdt.gateway.dto.area.AreaDto;
 import ru.accelerator.sdt.gateway.dto.area.AreaUpdateDto;
-import ru.accelerator.sdt.gateway.entities.Area;
-import ru.accelerator.sdt.gateway.repositories.AreaRepository;
 import ru.accelerator.sdt.gateway.repositories.UserRepository;
 import ru.accelerator.sdt.gateway.services.interf.AreaService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class AreaServiceImpl implements AreaService {
-    private final AreaRepository areaRepository;
-    private final UserRepository userRepository;
-    private final DateTimeFormatter dateFormatter;
 
+    private final RestTemplate restTemplate;
 
-    private Area areaToEntity(AreaCreateDto areaDto) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        LocalDate sowingDate = LocalDate.parse(areaDto.getSowingDate(), dtf);
-        return Area.builder()
-                .title(areaDto.getTitle())
-                .latitude(areaDto.getLatitude())
-                .longitude(areaDto.getLongitude())
-                .soilType(areaDto.getSoilType())
-                .user(userRepository.getReferenceById(areaDto.getUserId()))
-                .sowingDate(sowingDate)
-                .build();
-    }
+    @Value("${hosts.services.area}")
+    private String areaHost;
+    @Value("${mappings.services.area.create}")
+    private String createMapping;
+    @Value("${mappings.services.area.update}")
+    private String updateMapping;
+    @Value("${mappings.services.area.find}")
+    private String findMapping;
+    @Value("${mappings.services.area.findall}")
+    private String findAllMapping;
+    @Value("${mappings.services.area.delete}")
+    private String deleteMapping;
 
-    private AreaDto areaToDto(Area area) {
-        String sowingDate = dateFormatter.format(area.getSowingDate());
-        return AreaDto.builder()
-                .id(area.getId())
-                .title(area.getTitle())
-                .latitude(area.getLatitude())
-                .longitude(area.getLongitude())
-                .soilType(area.getSoilType())
-                .sowingDate(sowingDate)
-                .build();
+    @Override
+    public AreaDto createArea(AreaCreateDto area) {
+        try {
+            ResponseEntity<AreaDto> response = restTemplate.postForEntity(areaHost + createMapping, area, AreaDto.class);
+            return response.getBody();
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
-    @Transactional
-    public AreaDto createArea(AreaCreateDto areaDto) {
-        Area area = areaToEntity(areaDto);
-        area = areaRepository.save(area);
-        return areaToDto(area);
-    }
-
-    @Override
-    @Transactional
     public void updateArea(Integer id, AreaUpdateDto areaDto) {
-        areaRepository.updateArea(id,
-                areaDto.getTitle(),
-                areaDto.getLongitude(),
-                areaDto.getLatitude(),
-                areaDto.getSoilType(),
-                LocalDate.parse(areaDto.getSowingDate(), dateFormatter)
-                );
+        try {
+            ResponseEntity<Void> response = restTemplate.postForEntity(areaHost + updateMapping + "/" + id, areaDto, Void.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public AreaDto findAreaById(Integer id) {
-        Area area = areaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("area with such id doesn't exist"));
-        return areaToDto(area);
-    }
-
-    @Override
-    public Page<AreaDto> findAreaByTitle(String title, Integer page, Integer size) {
-        Page<Area> areaPage = areaRepository.findAreasByTitle(title, PageRequest.of(page, size));
-        return new PageImpl<AreaDto>(
-                areaPage.getContent().stream().map(this::areaToDto).toList(),
-                areaPage.getPageable(),
-                areaPage.getTotalElements()
-        );
+        try {
+            ResponseEntity<AreaDto> response = restTemplate.getForEntity(areaHost + findMapping, AreaDto.class);
+            return response.getBody();
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public Page<AreaDto> findAllAreas(Integer page, Integer size) {
-        Page<Area> areaPage = areaRepository.findAll(PageRequest.of(page, size));
-        return new PageImpl<AreaDto>(
-                areaPage.getContent().stream().map(this::areaToDto).toList(),
-                areaPage.getPageable(),
-                areaPage.getTotalElements()
-        );
+        try {
+            Map<String, Integer> params = new HashMap<>();
+            params.put("page", page);
+            params.put("size", size);
+            ResponseEntity<PageImpl> response = restTemplate.getForEntity(areaHost + findAllMapping, PageImpl.class, params);
+            return response.getBody();
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public void deleteAreaById(Integer id) {
-        areaRepository.deleteById(id);
+    public void deleteArea(Integer id) {
+        try {
+            restTemplate.delete(areaHost + deleteMapping + "/" + id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

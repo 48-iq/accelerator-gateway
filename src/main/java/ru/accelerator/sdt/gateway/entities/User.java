@@ -3,8 +3,6 @@ package ru.accelerator.sdt.gateway.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
 @Table(name = "users")
 @Getter
@@ -21,14 +19,8 @@ public class User {
     private String patronymic;
     private String username;
     private String password;
-    private Integer dayQueryCount;
-    private Integer todayQueryCount;
+    private Integer dayLimit;
+    private Integer todayCount;
     private Integer version;
     private Role role;
-
-    @OneToMany(mappedBy = "user")
-    private List<Query> queries;
-
-    @OneToMany(mappedBy = "user")
-    private List<Area> areas;
 }

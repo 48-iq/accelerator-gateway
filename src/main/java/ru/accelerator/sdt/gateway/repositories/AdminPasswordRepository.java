@@ -6,4 +6,6 @@ import ru.accelerator.sdt.gateway.entities.AdminPassword;
 
 @Repository
 public interface AdminPasswordRepository extends JpaRepository<AdminPassword, Integer> {
+    boolean existsByPassword(String password);
+
 }

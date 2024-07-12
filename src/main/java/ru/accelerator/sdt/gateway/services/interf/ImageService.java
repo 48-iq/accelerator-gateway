@@ -5,7 +5,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ImageService {
-    String uploadImage(MultipartFile file);
-    MultipartFile downloadImage(String fileName);
-    List<String> userImages(Integer userId);
+    String saveImage(MultipartFile file);
+    MultipartFile getImage(String fileName);
+    List<MultipartFile> getImages(List<String> fileNames);
+    List<String> getImagesByUser(Integer userId);
+    void deleteImage(String fileName);
 }

@@ -9,7 +9,6 @@ public interface AreaService {
     AreaDto createArea(AreaCreateDto area);
     void updateArea(Integer id, AreaUpdateDto areaDto);
     AreaDto findAreaById(Integer id);
-    Page<AreaDto> findAreaByTitle(String title, Integer page, Integer size);
     Page<AreaDto> findAllAreas(Integer page, Integer size);
-    void deleteAreaById(Integer id);
+    void deleteArea(Integer id);
 }
